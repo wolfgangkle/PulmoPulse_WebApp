@@ -2,6 +2,12 @@ import { https } from 'firebase-functions';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import { onCall } from 'firebase-functions/v2/https';
+import * as admin from 'firebase-admin';
+
+// ✅ Ensure Firebase Admin SDK is initialized
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
 
 export const createUserWithRole = onCall(async (request) => {
   const { email, password, role } = request.data;
@@ -16,16 +22,16 @@ export const createUserWithRole = onCall(async (request) => {
   }
 
   try {
-    // Create Firebase Auth user
+    // ✅ Create user in Firebase Auth
     const userRecord = await getAuth().createUser({
       email,
       password,
     });
 
-    // Assign custom claims
+    // ✅ Assign custom claims
     await getAuth().setCustomUserClaims(userRecord.uid, { role });
 
-    // Store user metadata in Firestore
+    // ✅ Write metadata to Firestore
     await getFirestore().collection('users').doc(userRecord.uid).set({
       email,
       role,
@@ -38,7 +44,7 @@ export const createUserWithRole = onCall(async (request) => {
       uid: userRecord.uid,
     };
   } catch (error: any) {
-    console.error('Error creating user:', error);
+    console.error('❌ Error creating user:', error);
     throw new https.HttpsError('internal', error.message || 'Unknown error');
   }
 });

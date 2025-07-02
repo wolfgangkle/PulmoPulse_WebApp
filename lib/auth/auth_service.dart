@@ -10,7 +10,19 @@ class AuthService {
       email: email,
       password: password,
     );
-    return result.user;
+    final user = result.user;
+
+    if (user != null) {
+      try {
+        await _firestore.collection('users').doc(user.uid).set({
+          'lastLoginAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      } catch (e) {
+        print('⚠️ Failed to update lastLoginAt: $e');
+      }
+    }
+
+    return user;
   }
 
   Future<void> signOut() async => await _auth.signOut();

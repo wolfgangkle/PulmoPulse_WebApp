@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/login_screen.dart';
 import '../auth/auth_service.dart';
+import 'package:pulmopulse_webapp/widgets/create_user_card.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -32,28 +33,35 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to the PulmoPulse WebApp',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Center(
+            child: Column(
+              children: [
+                const Text(
+                  'Welcome to the PulmoPulse WebApp',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                if (user != null)
+                  Text(
+                    'Logged in as: ${user.email}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                const SizedBox(height: 32),
+                const Text('Coming soon:'),
+                const SizedBox(height: 8),
+                const Text('- Patient list'),
+                const Text('- Data visualizations'),
+                const Text('- Admin user management'),
+              ],
             ),
-            const SizedBox(height: 16),
-            if (user != null)
-              Text(
-                'Logged in as: ${user.email}',
-                style: const TextStyle(fontSize: 16),
-              ),
-            const SizedBox(height: 32),
-            const Text('Coming soon:'),
-            const SizedBox(height: 8),
-            const Text('- Patient list'),
-            const Text('- Data visualizations'),
-            const Text('- Admin user management'),
-          ],
-        ),
+          ),
+          const SizedBox(height: 40),
+          const Divider(),
+          const CreateUserCard(), // 🔑 New user creation card
+        ],
       ),
     );
   }

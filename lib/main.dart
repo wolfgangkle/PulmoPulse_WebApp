@@ -7,9 +7,18 @@ import 'package:pulmopulse_webapp/dashboard/dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeFirebase();
-  runApp(const PulmoPulseApp());
+
+  try {
+    await initializeFirebase();
+    debugPrint('✅ Firebase initialized successfully');
+    debugPrint('✅ Firebase app name: ${Firebase.app().name}');
+    runApp(const PulmoPulseApp());
+  } catch (e, stackTrace) {
+    debugPrint('❌ Firebase initialization error: $e');
+    debugPrintStack(stackTrace: stackTrace);
+  }
 }
+
 
 class PulmoPulseApp extends StatelessWidget {
   const PulmoPulseApp({super.key});

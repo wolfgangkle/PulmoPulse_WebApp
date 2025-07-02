@@ -30,8 +30,12 @@ class _LoginScreenState extends State<LoginScreen> {
         _passwordController.text.trim(),
       );
 
+      if (!mounted) return; // 👈 prevents `setState()` after dispose
+
       if (user != null) {
         final role = await _authService.getUserRole(user.uid);
+        if (!mounted) return;
+
         if (role == null) {
           setState(() {
             _errorMessage = 'No role assigned. Contact admin.';
@@ -40,20 +44,19 @@ class _LoginScreenState extends State<LoginScreen> {
           return;
         }
 
-        // Navigate to dashboard
-        if (context.mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const DashboardScreen()),
-          );
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const DashboardScreen()),
+        );
       }
     } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = e.message ?? 'Authentication failed';
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = 'An unknown error occurred';
         _isLoading = false;
@@ -113,11 +116,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: CircularProgressIndicator(),
                 )
-              else
+              else ...[
                 ElevatedButton(
                   onPressed: _login,
                   child: const Text('Login'),
                 ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    _emailController.text = 'admin@pulmopulse.com';
+                    _passwordController.text = 'wert1234';
+                    _login();
+                  },
+                  icon: const Icon(Icons.flash_on),
+                  label: const Text('Auto-Login as Admin'),
+                ),
+              ],
             ],
           ),
         ),
