@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:pulmopulse_webapp/core/firebase_config.dart';
 import 'package:pulmopulse_webapp/auth/login_screen.dart';
 import 'package:pulmopulse_webapp/dashboard/dashboard_screen.dart';
+import 'package:pulmopulse_webapp/widgets/pulmopulse_background.dart'; // ✅ Add this
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,6 @@ void main() async {
   }
 }
 
-
 class PulmoPulseApp extends StatelessWidget {
   const PulmoPulseApp({super.key});
 
@@ -27,6 +27,7 @@ class PulmoPulseApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PulmoPulse WebApp',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -46,15 +47,18 @@ class RootScreen extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
+            backgroundColor: Colors.black,
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
         if (snapshot.hasData && snapshot.data != null) {
-          return const DashboardScreen();
+          return const DashboardScreen(); // 👉 we can style this later too
         }
 
-        return const LoginScreen();
+        return const PulmoPulseBackground(
+          child: LoginScreen(),
+        );
       },
     );
   }
