@@ -63,7 +63,7 @@ class _HeartRateDetailsScreenState extends State<HeartRateDetailsScreen> {
           .doc('heartRate')
           .collection('daily');
 
-      final snapshot = await ref.orderBy('date', descending: true).limit(7).get();
+      final snapshot = await ref.orderBy('date', descending: true).limit(30).get();
 
       final entries = snapshot.docs.map((doc) {
         final data = doc.data();
